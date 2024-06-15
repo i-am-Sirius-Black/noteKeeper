@@ -1,16 +1,7 @@
-import React, { useState } from "react";
+import React, { useRef, useState } from "react";
 import TextareaAutosize from "react-textarea-autosize";
-import { collection, addDoc } from "firebase/firestore";
-import { db } from "../firebase";
-
-const colors = [
-  "#FFFFFF",
-  "#FE9B72",
-  "#FEC971",
-  "#00D4FE",
-  "#DDDDDD",
-  "#D8EFD3",
-];
+import ColorPaletteModal from "./ColorPaletteModal";
+import useClickOutside from "../hooks/useClickOutside";
 
 function CreateNote({ onAddNote }) {
   const [expanded, setExpanded] = useState(false);
@@ -19,6 +10,16 @@ function CreateNote({ onAddNote }) {
   const [body, setBody] = useState("");
   const [color, setColor] = useState("#FFFFFF");
   const [pinned, setPinnned] = useState(false);
+
+  const noteRef = useRef(null);
+
+  const handleClose = () => {
+    setExpanded(false);
+    setPinnned(false);
+    setColor("#FFFFFF");
+  };
+
+  useClickOutside(noteRef, handleClose);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -41,12 +42,6 @@ function CreateNote({ onAddNote }) {
     console.log(color);
   };
 
-  const handleClose = () => {
-    setExpanded(false);
-    setPinnned(false); 
-    setColor("#FFFFFF");
-  };
-
   const handlePinnedStatus = () => {
     
     if (pinned) {
@@ -59,14 +54,15 @@ function CreateNote({ onAddNote }) {
   return (
     <div className="flex justify-center p-2">
       <div
-        className="relative flex flex-col gap-3 p-4 border rounded-md w-[40%] bg-white shadow fontOpenSans placeholder-zinc-500 appearance-none border text-gray-500 focus:outline-none focus:shadow-outline"
+        ref={noteRef}
+        className="relative flex flex-col gap-3 p-3 border rounded-md w-[40%] bg-white shadow shadow-gray-400 fontOpenSans placeholder-zinc-500 appearance-none border text-gray-500 focus:outline-none focus:shadow-outline"
         style={{ backgroundColor: color }}
       >
         {expanded && (
           <>
             <i
               onClick={() => handlePinnedStatus()}
-              className={`${pinned ? "ri-pushpin-2-fill" : "ri-pushpin-2-line"} absolute top-2 right-2 text-xl text-gray-400 cursor-pointer hover:shadow-2xl`}
+              className={`${pinned ? "ri-pushpin-2-fill" : "ri-pushpin-2-line"} absolute top-2 right-2 text-2xl text-gray-500 cursor-pointer hover:shadow-2xl`}
             ></i>
 
             <input
@@ -103,7 +99,7 @@ function CreateNote({ onAddNote }) {
           className={
             expanded
               ? "outline-none fontsemibold text-md fontRoboto my-3 placeholder-gray-500 resize-none"
-              : "outline-none fontsemibold placeholder-gray-700 font-semibold resize-none"
+              : "outline-none fontsemibold placeholder-gray-700 font-medium resize-none placeholder-gray-500"
           }
           onClick={() => setExpanded(true)}
         />
@@ -118,16 +114,7 @@ function CreateNote({ onAddNote }) {
               <i class="ri-add-line"></i>
             </button>
 
-            <div className="grid grid-cols-8 gap-2">
-              {colors.map((color) => (
-                <div
-                  key={color}
-                  onClick={() => handleColorChange(color)}
-                  className="w-5 h-5 rounded-full cursor-pointer border border-zinc-400 hover:border-zinc-600 hover:shadow-inner"
-                  style={{ backgroundColor: color }}
-                />
-              ))}
-            </div>
+            <ColorPaletteModal handleColorChange={handleColorChange} />
             <button
               className="text-gray-400 hover:text-gray-600 "
               onClick={() => handleClose()}

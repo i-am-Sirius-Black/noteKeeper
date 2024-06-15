@@ -1,60 +1,134 @@
-// NoteModal.jsx
-import React, { useState } from 'react';
-import { collection, addDoc } from 'firebase/firestore';
-import { db } from '../firebase'; // Ensure this path is correct
+import React, { useState, useEffect } from "react";
+import {
+  Modal,
+  ModalOverlay,
+  ModalContent,
+  ModalHeader,
+  ModalBody,
+  ModalCloseButton,
+  Button,
+  Input,
+  Textarea,
+  useToast,
+  Popover,
+  PopoverArrow,
+  PopoverBody,
+  PopoverCloseButton,
+  PopoverContent,
+  PopoverTrigger,
+  PopoverFooter,
+  PopoverHeader,
+  ButtonGroup,
+  useDisclosure,
+} from "@chakra-ui/react";
+import ColorPaletteModal from "./ColorPaletteModal";
 
-const NoteModal = () => {
-  const [title, setTitle] = useState('');
-  const [tagline, setTagline] = useState('');
-  const [body, setBody] = useState('');
+function NoteModal({ isOpen, onClose, note, onSave, onDelete }) {
+  const [title, setTitle] = useState(note?.title || "");
+  const [tagline, setTagline] = useState(note?.tagline || "");
+  const [body, setBody] = useState(note?.body || "");
+  const [color, setColor] = useState(note?.color || "");
+  const toast = useToast();
 
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-    console.log(title, tagline, body);
-    try {
-      const docRef = await addDoc(collection(db, "notes"), {
-        title,
-        tagline,
-        body,
-        timestamp: new Date()
-      });
-      console.log('Document written with ID: ', docRef.id);
-      // Clear form fields after submission
-      setTitle('');
-      setTagline('');
-      setBody('');
-      alert('Note added successfully!');
-    } catch (error) {
-      console.error('Error adding note: ', error);
-      alert('An error occurred while adding the note. Please try again.');
-    }
+  const { onOpen: popoverOnOpen, onClose: popoverOnClose, isOpen: isPopoverOpen } = useDisclosure();
+
+  useEffect(() => {
+    setTitle(note?.title || "");
+    setTagline(note?.tagline || "");
+    setBody(note?.body || "");
+    setColor(note?.color || "");
+  }, [note]);
+
+  const handleSave = () => {
+    const updatedNote = { ...note, title, tagline, body, color, timestamp: new Date() };
+    onSave(updatedNote);
+    onClose();
+  };
+  const handleColorChange = (color) => {
+    setColor(color);
+    console.log(color);
   };
 
+  const handleDelete=()=>{
+    onDelete(note.id)
+    popoverOnClose()
+  }
+
   return (
-    <form onSubmit={handleSubmit}>
-      <input
-        type="text"
-        value={title}
-        onChange={(e) => setTitle(e.target.value)}
-        placeholder="Title"
-        required
-      />
-      <input
-        type="text"
-        value={tagline}
-        onChange={(e) => setTagline(e.target.value)}
-        placeholder="Tagline"
-        required
-      />
-      <textarea
-        value={body}
-        onChange={(e) => setBody(e.target.value)}
-        placeholder="Body"
-        required
-      />
-      <button type="submit">Add Note</button>
-    </form>
+    <Modal isOpen={isOpen} onClose={onClose} scrollBehavior="inside" isCentered>
+      <ModalOverlay />
+      <ModalContent bg={color} p={4}>
+        <ModalHeader>
+          <Textarea
+            value={title}
+            onChange={(e) => setTitle(e.target.value)}
+            placeholder="Title"
+            variant="unstyled"
+            fontSize="2xl"
+            fontWeight="bold"
+            resize="none" // This will prevent the user from resizing the textarea
+          />
+        </ModalHeader>
+        <ModalCloseButton />
+        <ModalBody>
+          <Input
+            value={tagline}
+            onChange={(e) => setTagline(e.target.value)}
+            placeholder="Tagline"
+            variant="unstyled"
+            fontStyle="italic"
+            mb={4}
+          />
+          <Textarea
+            value={body}
+            onChange={(e) => setBody(e.target.value)}
+            placeholder="Take a note..."
+            variant="unstyled"
+            resize="none"
+            fontSize="md"
+            rows={12}
+            className="fontRoboto"
+          />
+        </ModalBody>
+
+        <div className="flex justify-between px-6 items-center">
+          <ColorPaletteModal handleColorChange={handleColorChange} />
+
+          <Button colorScheme='teal' variant='solid' size='sm' onClick={handleSave}>
+            Update
+          </Button>
+          <Button colorScheme='teal' variant='outline' size='sm' onClick={onClose}>
+            Cancel
+          </Button>
+
+          <Popover placement="right" isOpen={isPopoverOpen} onOpen={popoverOnOpen} onClose={popoverOnClose}>
+            <PopoverTrigger>
+              <i class="ri-delete-bin-line font-bold text-xl cursor-pointer text-zinc-500" />
+            </PopoverTrigger>
+            <PopoverContent>
+              <PopoverHeader>
+                <span>
+                  <i class="ri-alert-line text-red-500 text-xl" />
+                </span>{" "}
+                <span className="font-bold">Delete Note</span>
+              </PopoverHeader>
+              <PopoverArrow />
+              <PopoverCloseButton />
+              <PopoverBody>
+                <h1>Are you sure you want to delete this note?</h1>
+              </PopoverBody>
+              <PopoverFooter>
+                <ButtonGroup size="sm">
+                   <Button variant="outline" onClick={popoverOnClose}>Cancel</Button>
+                  <Button colorScheme="red"  onClick={handleDelete}>Delete</Button>
+                </ButtonGroup>
+              </PopoverFooter>
+            </PopoverContent>
+          </Popover>
+        </div>
+      </ModalContent>
+    </Modal>
   );
-};
+}
 
 export default NoteModal;

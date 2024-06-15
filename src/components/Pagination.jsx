@@ -20,7 +20,7 @@ const Pagination = ({ currentPage, totalPages, onPageChange }) => {
         disabled={currentPage === 1}
         className="text-2xl"
       >
-        <i class="ri-arrow-left-s-line"></i>
+        <i className="ri-arrow-left-s-line"></i>
       </button>
       <span className="px-4 py-2 mx-2">
         Page {currentPage} of {totalPages}
@@ -30,7 +30,7 @@ const Pagination = ({ currentPage, totalPages, onPageChange }) => {
         disabled={currentPage === totalPages}
         className="text-2xl"
       >
-        <i class="ri-arrow-right-s-line"></i>
+        <i className="ri-arrow-right-s-line"></i>
       </button>
     </div>
   );

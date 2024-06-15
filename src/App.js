@@ -1,36 +1,60 @@
 // src/App.js
-import React, { useContext, useEffect, useState } from 'react';
-import { NoteProvider, NoteContext } from './contexts/NoteContext';
-import { ModalProvider, ModalContext } from './contexts/ModalContext';
-import Header from './components/Header';
-import NoteGrid from './components/NoteGrid';
-import NoteModal from './components/NoteModal';
-import Pagination from './components/Pagination';
-import Toast from './components/Toast';
-import './App.css';
-import CreateNote from './components/CreateNote';
-import { addDoc, collection, getDocs } from 'firebase/firestore';
+import React, { useEffect, useState } from "react";
+import { NoteProvider } from "./contexts/NoteContext";
+import Header from "./components/Header";
+import NoteGrid from "./components/NoteGrid";
+import NoteModal from "./components/NoteModal";
+import Pagination from "./components/Pagination";
+import "./App.css";
+import CreateNote from "./components/CreateNote";
+import {
+  addDoc,
+  collection,
+  deleteDoc,
+  doc,
+  getDocs,
+  updateDoc,
+} from "firebase/firestore";
 import { db } from "./firebase";
-
+import { useToast } from "@chakra-ui/react";
 
 const App = () => {
-
   const [notes, setNotes] = useState([]);
   const [currentPage, setCurrentPage] = useState(1);
-  const [toastMessage, setToastMessage] = useState('');
+  const [selectedNote, setSelectedNote] = useState(null);
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [searchQuery, setSearchQuery] = useState('');
+
+  const toast = useToast();
 
   const notesPerPage = 6;
   const totalPages = Math.ceil(notes.length / notesPerPage);
-
 
   const notesCollectionRef = collection(db, "notes");
 
   useEffect(() => {
     const fetchNotes = async () => {
-      const data = await getDocs(notesCollectionRef);
-      // setNotes(data.docs.map((doc) => ({ ...doc.data(), id: doc.id })));
-      const fetchedNotes = data.docs.map(doc => ({ ...doc.data(), id: doc.id }));
-      setNotes(fetchedNotes.reverse()); // Reverse the notes order
+      try {
+        const data = await getDocs(notesCollectionRef);
+        const fetchedNotes = data.docs.map(doc => ({ ...doc.data(), id: doc.id }));
+
+        // Sort by pinned status first, then by timestamp
+        fetchedNotes.sort((a, b) => {
+          if (a.pinned === b.pinned) {
+            return b.timestamp.toDate() - a.timestamp.toDate(); // Sort by timestamp if pinned status is the same
+          }
+          return b.pinned - a.pinned; // Sort by pinned status
+        });
+        setNotes(fetchedNotes);
+      } catch (error) {
+        toast({
+          title: 'Error fetching notes.',
+          description: error.message,
+          status: 'error',
+          duration: 5000,
+          isClosable: true,
+        });
+      }
     };
     fetchNotes();
   }, []);
@@ -39,72 +63,183 @@ const App = () => {
   const handleAddNote = async (note) => {
     try {
       const docRef = await addDoc(notesCollectionRef, note);
-      // setNotes((prevNotes) => [...prevNotes, { ...note, id: docRef.id }]);
+
       setNotes((prevNotes) => {
         const newNotes = [...prevNotes, { ...note, id: docRef.id }];
+
+        // Sort by pinned status first, then by timestamp
+        newNotes.sort((a, b) => {
+          if (a.pinned === b.pinned) {
+            return b.timestamp - a.timestamp; // Sort by timestamp if pinned status is the same
+          }
+          return b.pinned - a.pinned; // Sort by pinned status
+        });
+
         const newTotalPages = Math.ceil(newNotes.length / notesPerPage);
 
         // Only change the current page if the new note creates a new page
-        if ((newNotes.length) % notesPerPage === 1 && newNotes.length > prevNotes.length) {
+        if (
+          newNotes.length % notesPerPage === 1 &&
+          newNotes.length > prevNotes.length
+        ) {
           setCurrentPage(newTotalPages);
         }
 
         return newNotes;
       });
-
-      setToastMessage('Note added successfully');
-      // if ((notes.length + 1) % notesPerPage === 0) {
-      //   setCurrentPage(totalPages + 1);
-      // }
     } catch (error) {
-      console.error("Error adding note: ", error);
-      alert("Error adding note: ", error)
-      setToastMessage('An error occurred while adding the note. Please try again.');
+      toast({
+        title: 'Error adding note.',
+        description: error.message,
+        status: 'error',
+        duration: 5000,
+        isClosable: true,
+      });
     }
   };
 
-  const paginatedNotes = notes.slice((currentPage - 1) * notesPerPage, currentPage * notesPerPage);
 
-  // const { notes, addNote, updateNote } = useContext(NoteContext);
-  // const { isModalOpen, currentNote, openModal, closeModal } = useContext(ModalContext);
-  
-  // const [toastMessage, setToastMessage] = useState('');
+  const handleNoteClick = (note) => {
+    setSelectedNote(note);
+    setIsModalOpen(true);
+  };
 
-  // const notesPerPage = 6;
-  // const totalPages = Math.ceil(notes.length / notesPerPage);
-  // const paginatedNotes = notes.slice((currentPage - 1) * notesPerPage, currentPage * notesPerPage);
+  const handleModalClose = () => {
+    setIsModalOpen(false);
+    setSelectedNote(null);
+  };
 
-  // const handleSaveNote = async (note) => {
-  //   if (note.id) {
-  //     await updateNote(note);
-  //     setToastMessage('Note updated successfully');
-  //   } else {
-  //     await addNote(note);
-  //     setToastMessage('Note added successfully');
-  //   }
-  // };
+  const handleUpdateNote = async (updatedNote) => {
+    const noteDoc = doc(db, "notes", updatedNote.id);
+    try {
+      await updateDoc(noteDoc, updatedNote);
+      setNotes((prevNotes) => {
+        const updatedNotes = prevNotes.map((note) =>
+          note.id === updatedNote.id ? updatedNote : note
+        );
+        updatedNotes.sort((a, b) => {
+          if (a.pinned === b.pinned) {
+            return b.timestamp - a.timestamp;
+          }
+          return b.pinned - a.pinned;
+        });
+
+        return updatedNotes;
+      });
+
+      toast({
+        title: 'Note updated successfully.',
+        status: 'success',
+        duration: 3000,
+        isClosable: true,
+      });
+    } catch (error) {
+      toast({
+        title: 'Error updating note.',
+        description: error.message,
+        status: 'error',
+        duration: 5000,
+        isClosable: true,
+      });
+    }
+  };
+
+  //updates card pinned status on pin click
+  const handlePinnedStatus = async (id, currentPinnedStatus) => {
+    const noteDoc = doc(db, "notes", id);
+    try {
+      await updateDoc(noteDoc, {
+        pinned: !currentPinnedStatus,
+      });
+
+      setNotes((prevNotes) => {
+        const updatedNotes = prevNotes.map((note) =>
+          note.id === id ? { ...note, pinned: !currentPinnedStatus } : note
+        );
+
+        updatedNotes.sort((a, b) => {
+          if (a.pinned === b.pinned) {
+            return b.timestamp - a.timestamp;
+          }
+          return b.pinned - a.pinned;
+        });
+
+        return updatedNotes;
+      });
+    } catch (error) {
+      toast({
+        title: 'Error updating note pin status.',
+        description: error.message,
+        status: 'error',
+        duration: 5000,
+        isClosable: true,
+      });
+    }
+  };
+
+  const handleDeleteNote = async (id) => {
+    const noteDoc = doc(db, "notes", id);
+    try {
+      await deleteDoc(noteDoc);
+      setNotes((prevNotes) => prevNotes.filter((note) => note.id !== id));
+
+      toast({
+        title: 'Note deleted.',
+        status: 'success',
+        duration: 3000,
+        isClosable: true,
+      });
+    } catch (error) {
+      toast({
+        title: 'Error deleting note.',
+        description: error.message,
+        status: 'error',
+        duration: 5000,
+        isClosable: true,
+      });
+    }
+  };
+
+  // Filter notes based on search query
+  const handleSearch = (query) => {
+    setSearchQuery(query);
+    setCurrentPage(1);
+  };
+
+  const filteredNotes = notes.filter(note => 
+    note.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
+    note.tagline.toLowerCase().includes(searchQuery.toLowerCase()) ||
+    note.body.toLowerCase().includes(searchQuery.toLowerCase())
+  );
+
+  const paginatedFilteredNotes = filteredNotes.slice((currentPage - 1) * notesPerPage, currentPage * notesPerPage);
 
   return (
     <NoteProvider>
-      {/* <ModalProvider> */}
-        <div className="app">
-          <Header/>
-          <CreateNote onAddNote={handleAddNote} />
-          <NoteGrid notes={paginatedNotes}/>
-          <Pagination
-            currentPage={currentPage}
-            totalPages={totalPages}
-            onPageChange={setCurrentPage}
-          />
-          {/* <NoteGrid notes={paginatedNotes} onNoteClick={openModal} /> */}
-          {/* <Pagination currentPage={currentPage} totalPages={totalPages} onPageChange={setCurrentPage} />
-          {isModalOpen && <NoteModal isOpen={isModalOpen} onClose={closeModal} onSave={handleSaveNote} note={currentNote} />}
-          {toastMessage && <Toast message={toastMessage} onClose={() => setToastMessage('')} />} */}
-        </div>
-      {/* </ModalProvider> */}
+      <div className="app">
+        <Header onSearch={handleSearch} />
+        <CreateNote onAddNote={handleAddNote} />
+        <NoteGrid
+          notes={paginatedFilteredNotes}
+          onNoteClick={handleNoteClick}
+          onPinClick={handlePinnedStatus}
+        />
+        <Pagination
+          currentPage={currentPage}
+          totalPages={totalPages}
+          onPageChange={setCurrentPage}
+        />
+
+        <NoteModal
+          isOpen={isModalOpen}
+          onClose={handleModalClose}
+          note={selectedNote}
+          onSave={handleUpdateNote}
+          onDelete={handleDeleteNote}
+        />
+      </div>
     </NoteProvider>
   );
 };
 
 export default App;
-

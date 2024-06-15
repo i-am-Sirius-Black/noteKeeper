@@ -1,29 +1,45 @@
-import React from 'react';
+import React from "react";
+import {
+  Popover,
+  PopoverArrow,
+  PopoverBody,
+  PopoverCloseButton,
+  PopoverContent,
+  PopoverTrigger,
+} from "@chakra-ui/react";
 
-const ColorPaletteModal = ({ show, onClose, onColorSelect }) => {
-  if (!show) return null;
-
+const ColorPaletteModal = ({ handleColorChange }) => {
   const colors = [
-    '#F28B82', '#F7BD02', '#FBF476', 
-    '#CCFF90', '#A7FEEB', '#CBF0F8', '#AECBFA',
+    "#FFFFFF",
+    "#FE9B72",
+    "#FEC971",
+    "#A7E6FF",
+    "#DDDDDD",
+    "#D8EFD3",
   ];
 
   return (
-    <div className="absolute top-[35%] flex justify-center items-center">
-      <div className="p-4 rounded shadow-lg">
-        <div className="grid grid-cols-8 gap-2">
-          {colors.map((color) => (
-            <div 
-              key={color} 
-              onClick={() => onColorSelect(color)}
-              className="w-5 h-5 rounded-full cursor-pointer border hover:border-black"
-              style={{ backgroundColor: color }}
-            />
-          ))}
-        </div>
-        {/* <button onClick={onClose} className="rounded"><i class="ri-close-line"></i></button> */}
-      </div>
-    </div>
+    <Popover>
+      <PopoverTrigger>
+        <i className="ri-palette-line text-xl font-bold cursor-pointer text-zinc-500" />
+      </PopoverTrigger>
+      <PopoverContent>
+        <PopoverArrow />
+        <PopoverCloseButton />
+        <PopoverBody>
+          <div className="grid grid-cols-6">
+            {colors.map((color) => (
+              <div
+                key={color}
+                onClick={() => handleColorChange(color)}
+                className="w-5 h-5 rounded-full cursor-pointer border border-zinc-400 hover:border-zinc-600 hover:shadow-inner"
+                style={{ backgroundColor: color }}
+              />
+            ))}
+          </div>
+        </PopoverBody>
+      </PopoverContent>
+    </Popover>
   );
 };
 

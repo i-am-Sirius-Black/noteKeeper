@@ -1,7 +1,7 @@
 import React from "react";
 import NoteCard from "./NoteCard";
 
-const NoteGrid = ({ notes }) => {
+const NoteGrid = ({ notes, onNoteClick, onPinClick   }) => {
   return (
     <div className="w-full mt-8">
       <div className="flex justify-center">
@@ -14,6 +14,9 @@ const NoteGrid = ({ notes }) => {
             content={note.body}
             color={note.color}
             tagline={note.tagline}
+            pinned={note.pinned}
+            onClick={() => onNoteClick(note)}
+            onPinClick={() => onPinClick(note.id, note.pinned)} // Pass note id and pinned status
           />
         ))}
       </div>
