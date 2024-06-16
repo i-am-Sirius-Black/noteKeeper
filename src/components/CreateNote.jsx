@@ -55,7 +55,7 @@ function CreateNote({ onAddNote }) {
     <div className="flex justify-center p-2">
       <div
         ref={noteRef}
-        className="relative flex flex-col gap-3 p-3 border rounded-md w-[40%] bg-white shadow shadow-gray-400 fontOpenSans placeholder-zinc-500 appearance-none border text-gray-500 focus:outline-none focus:shadow-outline"
+        className="create-note relative flex flex-col gap-3 p-3 border rounded-md w-[40%] bg-white shadow shadow-gray-400 fontOpenSans placeholder-zinc-500 appearance-none border text-gray-500 focus:outline-none focus:shadow-outline"
         style={{ backgroundColor: color }}
       >
         {expanded && (

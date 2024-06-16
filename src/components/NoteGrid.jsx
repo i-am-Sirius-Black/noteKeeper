@@ -5,7 +5,7 @@ const NoteGrid = ({ notes, onNoteClick, onPinClick   }) => {
   return (
     <div className="w-full mt-8">
       <div className="flex justify-center">
-      <div className="grid grid-cols-3 gap-10 p-4 fontRoboto">
+      <div className="note-grid grid grid-cols-3 gap-10 p-4 fontRoboto">
         {/* <div className="flex justify-between gap-5 fontRoboto"> */}
         {notes.map((note, index) => (
           <NoteCard

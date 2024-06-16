@@ -30,11 +30,11 @@ const NoteCard = ({
 
   return (
     <div
-      className={`relative grid p-4 rounded-xl w-72 bg-white rounded-xl duration-500 shadow shadow-zinc-400 hover:shadow-lg hover:shadow-zinc-800 cursor-default`}
+      className={`note-card relative grid p-4 rounded-xl w-72 h-72 bg-white rounded-xl duration-500 shadow shadow-zinc-400 hover:shadow-lg hover:shadow-zinc-800 cursor-default`}
       style={{
         backgroundColor: color,
-        height: "250px",
-        minHeight: "150px",
+        // height: "250px",
+        // minHeight: "150px",
         gridTemplateRows: "1fr 2fr 1fr",
       }}
       onMouseEnter={() => setIsHovered(true)}

@@ -18,3 +18,57 @@ body{
   font-weight: 500;
   font-style: normal;
 }
+
+@media (min-width: 769px) and (max-width: 1024px) {
+  /* For Big tablets */
+  .note-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr)); /* 2 columns */
+  }
+  .search-bar{
+    width: 60%;
+  }
+  .create-note{
+    width: 80%;
+  }
+}
+
+@media (min-width: 481px) and (max-width: 768px) {
+  /* For Small tablets */
+  .note-grid {
+    grid-template-columns: repeat(1, minmax(0, 1fr)); /* 2 columns */
+  }
+  .note-card{
+    width: 25rem;
+    height: 20rem;
+  }
+  .search-bar-div{
+    width: 50%;
+  }
+  .create-note{
+    width: 70%;
+  }
+}
+
+@media (max-width: 480px) {
+  /* For mobile devices */
+  .note-grid {
+    grid-template-columns: repeat(1, minmax(0, 1fr)); /* 1 column */
+  }
+
+  .search-bar-div{
+    /* flex-grow: 1; */
+    display: none;
+  }
+  .create-note{
+    width: 85%;
+  }
+  
+  .ri-search-line{
+    display: none;
+  }
+
+}
+
+
+
+/* grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 */

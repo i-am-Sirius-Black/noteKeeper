@@ -17,6 +17,7 @@ import {
 } from "firebase/firestore";
 import { db } from "./firebase";
 import { useToast } from "@chakra-ui/react";
+import Footer from "./components/Footer";
 
 const App = () => {
   const [notes, setNotes] = useState([]);
@@ -237,6 +238,7 @@ const App = () => {
           onSave={handleUpdateNote}
           onDelete={handleDeleteNote}
         />
+        <Footer />
       </div>
     </NoteProvider>
   );

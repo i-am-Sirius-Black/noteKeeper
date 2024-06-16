@@ -63,6 +63,7 @@ function NoteModal({ isOpen, onClose, note, onSave, onDelete }) {
             value={title}
             onChange={(e) => setTitle(e.target.value)}
             placeholder="Title"
+            rows={3}
             variant="unstyled"
             fontSize="2xl"
             fontWeight="bold"
@@ -101,7 +102,7 @@ function NoteModal({ isOpen, onClose, note, onSave, onDelete }) {
             Cancel
           </Button>
 
-          <Popover placement="right" isOpen={isPopoverOpen} onOpen={popoverOnOpen} onClose={popoverOnClose}>
+          <Popover placement="left" isOpen={isPopoverOpen} onOpen={popoverOnOpen} onClose={popoverOnClose}>
             <PopoverTrigger>
               <i class="ri-delete-bin-line font-bold text-xl cursor-pointer text-zinc-500" />
             </PopoverTrigger>
