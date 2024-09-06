@@ -1,6 +1,15 @@
 # Notes App
 
 A simple and responsive notes application built with React, Tailwind CSS, and Firebase. The app allows users to create, update, delete, and search notes. The notes can be pinned, and their colors can be customized using a color palette. 
+## Live Link -> https://notekeeper-alpha8412.netlify.app/
+
+### Screenshots:
+<img width="1437" alt="Screenshot 2024-09-07 at 12 09 56 AM" src="https://github.com/user-attachments/assets/bfce8ec5-cf70-4e19-a00b-f04da393f023">
+<img width="1415" alt="Screenshot 2024-09-07 at 12 10 35 AM" src="https://github.com/user-attachments/assets/a5ed5872-f590-47bf-ae5c-dcb8b6e2c260">
+<img width="1407" alt="Screenshot 2024-09-07 at 12 11 25 AM" src="https://github.com/user-attachments/assets/feffe00b-768f-4e88-858d-6e2a54807438">
+<img width="1203" alt="Screenshot 2024-09-07 at 12 10 58 AM" src="https://github.com/user-attachments/assets/0f5e18a3-8f0c-446a-8119-47e89827b500">
+<img width="1402" alt="Screenshot 2024-09-07 at 12 10 14 AM" src="https://github.com/user-attachments/assets/5e66042c-ffe9-4008-b3b4-097a7b83f9a3">
+
 
 ## Features
 
