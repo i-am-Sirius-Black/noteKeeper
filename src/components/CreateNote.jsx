@@ -52,17 +52,17 @@ function CreateNote({ onAddNote }) {
   };
 
   return (
-    <div className="flex justify-center p-2">
+    <div className="flex justify-center p-4 mt-4 mb-6">
       <div
         ref={noteRef}
-        className="create-note relative flex flex-col gap-3 p-3 border rounded-md w-[40%] bg-white shadow shadow-gray-400 fontOpenSans placeholder-zinc-500 appearance-none border text-gray-500 focus:outline-none focus:shadow-outline"
+        className="create-note relative flex flex-col gap-3 p-4 border border-gray-300 rounded-lg bg-white shadow-md hover:shadow-lg transition-shadow duration-200 fontOpenSans text-gray-700"
         style={{ backgroundColor: color }}
       >
         {expanded && (
           <>
             <i
               onClick={() => handlePinnedStatus()}
-              className={`${pinned ? "ri-pushpin-2-fill" : "ri-pushpin-2-line"} absolute top-2 right-2 text-2xl text-gray-500 cursor-pointer hover:shadow-2xl`}
+              className={`${pinned ? "ri-pushpin-2-fill" : "ri-pushpin-2-line"} absolute top-3 right-3 text-2xl text-gray-600 cursor-pointer hover:text-gray-800 transition-colors`}
             ></i>
 
             <input
@@ -71,19 +71,17 @@ function CreateNote({ onAddNote }) {
               name="title"
               value={title}
               onChange={(e) => setTitle(e.target.value)}
-              required
               style={{ backgroundColor: color }}
-              className="outline-none font-semibold text-lg placeholder-gray-500 capitalize"
+              className="outline-none font-semibold text-lg placeholder-gray-400 capitalize pt-2"
             />
             <input
               type="text"
               value={tagline}
               onChange={(e) => setTagline(e.target.value)}
-              required
               placeholder="@Tagline"
               name="tagline"
               style={{ backgroundColor: color }}
-              className="outline-none text-sm"
+              className="outline-none text-sm placeholder-gray-400 italic"
             />
           </>
         )}
@@ -94,29 +92,29 @@ function CreateNote({ onAddNote }) {
           rows="2"
           value={body}
           onChange={(e) => setBody(e.target.value)}
-          required
           style={{ backgroundColor: color }}
           className={
             expanded
-              ? "outline-none fontsemibold text-md fontRoboto my-3 placeholder-gray-500 resize-none"
-              : "outline-none fontsemibold placeholder-gray-700 font-medium resize-none placeholder-gray-500"
+              ? "outline-none text-md fontRoboto my-2 placeholder-gray-400 resize-none leading-relaxed"
+              : "outline-none placeholder-gray-600 font-medium resize-none cursor-text"
           }
           onClick={() => setExpanded(true)}
         />
 
         {expanded && (
-          <div className="flex justify-between ">
+          <div className="flex justify-between items-center pt-2">
             <button
               onClick={handleSubmit}
               type="submit"
-              className="text-2xl font-bold hover:text-black"
+              className="text-2xl font-bold text-gray-600 hover:text-gray-900 transition-colors"
+              title="Add Note"
             >
-              <i class="ri-add-line"></i>
+              <i className="ri-add-line"></i>
             </button>
 
             <ColorPaletteModal handleColorChange={handleColorChange} />
             <button
-              className="text-gray-400 hover:text-gray-600 "
+              className="text-gray-500 hover:text-gray-700 text-sm font-medium transition-colors px-3 py-1 rounded hover:bg-gray-100"
               onClick={() => handleClose()}
             >
               Close

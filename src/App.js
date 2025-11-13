@@ -219,17 +219,21 @@ const App = () => {
     <NoteProvider>
       <div className="app">
         <Header onSearch={handleSearch} />
-        <CreateNote onAddNote={handleAddNote} />
-        <NoteGrid
-          notes={paginatedFilteredNotes}
-          onNoteClick={handleNoteClick}
-          onPinClick={handlePinnedStatus}
-        />
-        <Pagination
-          currentPage={currentPage}
-          totalPages={totalPages}
-          onPageChange={setCurrentPage}
-        />
+        <div className="main-content">
+          <CreateNote onAddNote={handleAddNote} />
+          <NoteGrid
+            notes={paginatedFilteredNotes}
+            onNoteClick={handleNoteClick}
+            onPinClick={handlePinnedStatus}
+          />
+          {filteredNotes.length > 0 && (
+            <Pagination
+              currentPage={currentPage}
+              totalPages={Math.ceil(filteredNotes.length / notesPerPage)}
+              onPageChange={setCurrentPage}
+            />
+          )}
+        </div>
 
         <NoteModal
           isOpen={isModalOpen}

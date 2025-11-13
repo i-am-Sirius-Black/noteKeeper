@@ -30,12 +30,12 @@ const NoteCard = ({
 
   return (
     <div
-      className={`note-card relative grid p-4 rounded-xl w-72 h-72 bg-white rounded-xl duration-500 shadow shadow-zinc-400 hover:shadow-lg hover:shadow-zinc-800 cursor-default`}
+      className={`note-card relative grid p-4 rounded-xl bg-white duration-300 shadow shadow-zinc-400 hover:shadow-lg hover:shadow-zinc-600 cursor-pointer transition-all`}
       style={{
         backgroundColor: color,
-        // height: "250px",
-        // minHeight: "150px",
-        gridTemplateRows: "1fr 2fr 1fr",
+        height: "280px",
+        width: "100%",
+        gridTemplateRows: "auto auto 1fr",
       }}
       onMouseEnter={() => setIsHovered(true)}
       onMouseLeave={() => setIsHovered(false)}
@@ -46,30 +46,32 @@ const NoteCard = ({
         <i
           className={`${
             pinnedStatus ? "ri-pushpin-fill" : "ri-pushpin-line"
-          } absolute top-1 right-1 text-xl cursor-pointer`}
+          } absolute top-2 right-2 text-xl cursor-pointer text-gray-600 hover:text-gray-800`}
           onClick={handlePinClick}
         />
-      ) : (<i
-        className={`${
-          pinnedStatus && "ri-pushpin-fill"
-        } absolute top-1 right-1 text-xl cursor-pointer`}
-      />)}
+      ) : (
+        pinnedStatus && (
+          <i className="ri-pushpin-fill absolute top-2 right-2 text-xl text-gray-600" />
+        )
+      )}
 
       <div className="pb-2">
-        <h3 className="font-semibold mb-2">
-          {truncate(title, maxLengthTitle)}
-        </h3>
-        <p className="italic text-sm mb-2">{truncate(tagline, maxLengthTag)}</p>
+        {title && (
+          <h3 className="font-semibold mb-1 text-gray-800 leading-tight">
+            {truncate(title, maxLengthTitle)}
+          </h3>
+        )}
+        {tagline && (
+          <p className="italic text-sm text-gray-600 mb-1">
+            {truncate(tagline, maxLengthTag)}
+          </p>
+        )}
       </div>
-      <div className="body-content row-span-2">
-        <p>{truncate(content, maxLengthBody)}</p>
+      <div className="body-content overflow-hidden">
+        <p className="text-gray-700 leading-relaxed whitespace-pre-wrap break-words">
+          {truncate(content, maxLengthBody)}
+        </p>
       </div>
-
-      {/* {isHovered && (
-        <div className='flex justify-end'>
-          <p></p>
-        </div>
-      )} */}
     </div>
   );
 };

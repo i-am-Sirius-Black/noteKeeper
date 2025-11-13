@@ -1,8 +1,37 @@
 @import url('https://fonts.googleapis.com/css2?family=Open+Sans:ital,wght@0,300..800;1,300..800&display=swap');
 @import url('https://fonts.googleapis.com/css2?family=Roboto:ital,wght@0,100;0,300;0,400;0,500;0,700;0,900;1,100;1,300;1,400;1,500;1,700;1,900&display=swap');
 
-body{
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+html, body, #root {
+  height: 100%;
+  margin: 0;
+  padding: 0;
+}
+
+body {
   background-color: #F8F8F8;
+  min-height: 100vh;
+}
+
+.app {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+}
+
+.main-content {
+  flex: 1 0 auto;
+  padding-bottom: 2rem;
+}
+
+footer {
+  flex-shrink: 0;
+  margin-top: auto;
 }
 
 .fontOpenSans{
@@ -19,56 +48,89 @@ body{
   font-style: normal;
 }
 
+/* Desktop */
+@media (min-width: 1025px) {
+  .note-grid {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 2rem;
+  }
+  .create-note {
+    width: 45%;
+    max-width: 600px;
+  }
+  .note-card {
+    width: 100%;
+    max-width: 350px;
+  }
+}
+
 @media (min-width: 769px) and (max-width: 1024px) {
   /* For Big tablets */
   .note-grid {
-    grid-template-columns: repeat(2, minmax(0, 1fr)); /* 2 columns */
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 1.5rem;
   }
-  .search-bar{
-    width: 60%;
+  .search-bar-div {
+    width: 40%;
   }
-  .create-note{
-    width: 80%;
+  .create-note {
+    width: 65%;
+    max-width: 600px;
+  }
+  .note-card {
+    width: 100%;
+    max-width: 350px;
   }
 }
 
 @media (min-width: 481px) and (max-width: 768px) {
   /* For Small tablets */
   .note-grid {
-    grid-template-columns: repeat(1, minmax(0, 1fr)); /* 2 columns */
+    grid-template-columns: repeat(1, minmax(0, 1fr));
+    gap: 1.5rem;
   }
-  .note-card{
-    width: 25rem;
-    height: 20rem;
+  .note-card {
+    width: 100%;
+    max-width: 450px;
+    margin: 0 auto;
   }
-  .search-bar-div{
-    width: 50%;
+  .search-bar-div {
+    width: 45%;
   }
-  .create-note{
-    width: 70%;
+  .create-note {
+    width: 80%;
+    max-width: 500px;
   }
 }
 
 @media (max-width: 480px) {
   /* For mobile devices */
   .note-grid {
-    grid-template-columns: repeat(1, minmax(0, 1fr)); /* 1 column */
-  }
-
-  .search-bar-div{
-    /* flex-grow: 1; */
-    display: none;
-  }
-  .create-note{
-    width: 85%;
+    grid-template-columns: repeat(1, minmax(0, 1fr));
+    gap: 1rem;
   }
   
-  .ri-search-line{
-    display: none;
+  .note-card {
+    width: 100%;
+    max-width: 380px;
+    margin: 0 auto;
   }
 
+  .search-bar-div {
+    display: none;
+  }
+  
+  .create-note {
+    width: 90%;
+    max-width: 380px;
+  }
+  
+  .header .social-icons {
+    gap: 0.5rem;
+  }
+  
+  .header .social-icons i {
+    font-size: 1.5rem !important;
+  }
 }
 
-
-
-/* grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 */
